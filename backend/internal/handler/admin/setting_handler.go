@@ -296,6 +296,10 @@ func (h *SettingHandler) GetSettings(c *gin.Context) {
 
 		AvailableChannelsEnabled: settings.AvailableChannelsEnabled,
 
+		PricingPageEnabled: settings.PricingPageEnabled,
+		PricingCNYRate:     settings.PricingCNYRate,
+		PricingGroupIDs:    settings.PricingGroupIDs,
+
 		AffiliateEnabled: settings.AffiliateEnabled,
 	}
 
@@ -637,6 +641,11 @@ type UpdateSettingsRequest struct {
 
 	// Available Channels feature switch (user-facing)
 	AvailableChannelsEnabled *bool `json:"available_channels_enabled"`
+
+	// Pricing page feature switch
+	PricingPageEnabled *bool    `json:"pricing_page_enabled"`
+	PricingCNYRate     *float64 `json:"pricing_cny_rate"`
+	PricingGroupIDs    *[]int64 `json:"pricing_group_ids"`
 
 	// Affiliate (邀请返利) feature switch
 	AffiliateEnabled *bool `json:"affiliate_enabled"`
@@ -1747,6 +1756,24 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 			}
 			return previousSettings.AvailableChannelsEnabled
 		}(),
+		PricingPageEnabled: func() bool {
+			if req.PricingPageEnabled != nil {
+				return *req.PricingPageEnabled
+			}
+			return previousSettings.PricingPageEnabled
+		}(),
+		PricingCNYRate: func() float64 {
+			if req.PricingCNYRate != nil {
+				return *req.PricingCNYRate
+			}
+			return previousSettings.PricingCNYRate
+		}(),
+		PricingGroupIDs: func() []int64 {
+			if req.PricingGroupIDs != nil {
+				return *req.PricingGroupIDs
+			}
+			return previousSettings.PricingGroupIDs
+		}(),
 		AffiliateEnabled: func() bool {
 			if req.AffiliateEnabled != nil {
 				return *req.AffiliateEnabled
@@ -2077,6 +2104,10 @@ func (h *SettingHandler) UpdateSettings(c *gin.Context) {
 		ChannelMonitorDefaultIntervalSeconds: updatedSettings.ChannelMonitorDefaultIntervalSeconds,
 
 		AvailableChannelsEnabled: updatedSettings.AvailableChannelsEnabled,
+
+		PricingPageEnabled: updatedSettings.PricingPageEnabled,
+		PricingCNYRate:     updatedSettings.PricingCNYRate,
+		PricingGroupIDs:    updatedSettings.PricingGroupIDs,
 
 		AffiliateEnabled: updatedSettings.AffiliateEnabled,
 
@@ -2555,6 +2586,15 @@ func diffSettings(before *service.SystemSettings, after *service.SystemSettings,
 	if before.AvailableChannelsEnabled != after.AvailableChannelsEnabled {
 		changed = append(changed, "available_channels_enabled")
 	}
+	if before.PricingPageEnabled != after.PricingPageEnabled {
+		changed = append(changed, "pricing_page_enabled")
+	}
+	if before.PricingCNYRate != after.PricingCNYRate {
+		changed = append(changed, "pricing_cny_rate")
+	}
+	if !equalInt64Slice(before.PricingGroupIDs, after.PricingGroupIDs) {
+		changed = append(changed, "pricing_group_ids")
+	}
 	if before.AffiliateEnabled != after.AffiliateEnabled {
 		changed = append(changed, "affiliate_enabled")
 	}
@@ -2784,6 +2824,18 @@ func equalLoginAgreementDocuments(a, b []service.LoginAgreementDocument) bool {
 }
 
 func equalIntSlice(a, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func equalInt64Slice(a, b []int64) bool {
 	if len(a) != len(b) {
 		return false
 	}

@@ -911,6 +911,20 @@ func clampChannelMonitorInterval(v int) int {
 	return v
 }
 
+// parseInt64JSONArray parses a JSON array of int64 from a raw string.
+// Returns nil for empty/invalid input.
+func parseInt64JSONArray(raw string) []int64 {
+	raw = strings.TrimSpace(raw)
+	if raw == "" || raw == "[]" {
+		return nil
+	}
+	var ids []int64
+	if json.Unmarshal([]byte(raw), &ids) != nil {
+		return nil
+	}
+	return ids
+}
+
 // ChannelMonitorRuntime is the lightweight view of the channel monitor feature
 // consumed by the runner and user-facing handlers.
 type ChannelMonitorRuntime struct {
@@ -1909,6 +1923,13 @@ func (s *SettingService) buildSystemSettingsUpdates(ctx context.Context, setting
 
 	// Available channels feature switch
 	updates[SettingKeyAvailableChannelsEnabled] = strconv.FormatBool(settings.AvailableChannelsEnabled)
+
+	// Pricing page feature
+	updates[SettingKeyPricingPageEnabled] = strconv.FormatBool(settings.PricingPageEnabled)
+	updates[SettingKeyPricingCNYRate] = strconv.FormatFloat(settings.PricingCNYRate, 'f', -1, 64)
+	if b, err := json.Marshal(settings.PricingGroupIDs); err == nil {
+		updates[SettingKeyPricingGroupIDs] = string(b)
+	}
 
 	// Affiliate (邀请返利) feature switch
 	updates[SettingKeyAffiliateEnabled] = strconv.FormatBool(settings.AffiliateEnabled)
@@ -3338,6 +3359,15 @@ func (s *SettingService) parseSettings(settings map[string]string) *SystemSettin
 
 	// Available channels feature (default: disabled; strict true)
 	result.AvailableChannelsEnabled = settings[SettingKeyAvailableChannelsEnabled] == "true"
+
+	// Pricing page feature
+	result.PricingPageEnabled = settings[SettingKeyPricingPageEnabled] == "true"
+	if v, err := strconv.ParseFloat(strings.TrimSpace(settings[SettingKeyPricingCNYRate]), 64); err == nil && v > 0 {
+		result.PricingCNYRate = v
+	} else {
+		result.PricingCNYRate = 7.0
+	}
+	result.PricingGroupIDs = parseInt64JSONArray(settings[SettingKeyPricingGroupIDs])
 
 	// Affiliate (邀请返利) feature (default: disabled; strict true)
 	result.AffiliateEnabled = settings[SettingKeyAffiliateEnabled] == "true"

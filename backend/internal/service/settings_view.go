@@ -177,6 +177,11 @@ type SystemSettings struct {
 	// Available Channels feature (user-facing aggregate view)
 	AvailableChannelsEnabled bool `json:"available_channels_enabled"`
 
+	// Pricing page feature
+	PricingPageEnabled bool    `json:"pricing_page_enabled"`
+	PricingCNYRate     float64 `json:"pricing_cny_rate"`
+	PricingGroupIDs    []int64 `json:"pricing_group_ids"`
+
 	// Claude Code version check
 	MinClaudeCodeVersion string
 	MaxClaudeCodeVersion string
