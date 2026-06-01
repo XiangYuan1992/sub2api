@@ -5235,6 +5235,45 @@
               </div>
               <Toggle v-model="form.available_channels_enabled" />
             </div>
+            <div class="border-t border-gray-100 pt-5 dark:border-dark-700">
+              <div class="flex items-center justify-between">
+                <div>
+                  <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    {{ t('pricing.title') }}
+                  </label>
+                  <p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                    {{ t('pricing.subtitle') }}
+                  </p>
+                </div>
+                <Toggle v-model="form.pricing_page_enabled" />
+              </div>
+              <div v-if="form.pricing_page_enabled" class="mt-4 space-y-4">
+                <div class="flex items-center gap-3">
+                  <label class="text-sm text-gray-700 dark:text-gray-300">$1 = ¥</label>
+                  <input
+                    v-model.number="form.pricing_cny_rate"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    class="w-28 rounded-lg border border-gray-300 px-3 py-1.5 text-sm dark:border-dark-600 dark:bg-dark-800 dark:text-white"
+                  />
+                </div>
+                <div>
+                  <p class="mb-2 text-xs text-gray-500 dark:text-gray-400">{{ t('pricing.listHint') }}</p>
+                  <div class="flex flex-wrap gap-2">
+                    <label
+                      v-for="g in pricingGroups"
+                      :key="g.id"
+                      class="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-sm dark:border-dark-600 dark:text-gray-300"
+                    >
+                      <input type="checkbox" :value="g.id" v-model="form.pricing_group_ids" />
+                      <span>{{ g.name }}</span>
+                    </label>
+                    <span v-if="pricingGroups.length === 0" class="text-xs text-gray-400">-</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -6837,6 +6876,7 @@ const adminApiKeyMasked = ref("");
 const adminApiKeyOperating = ref(false);
 const newAdminApiKey = ref("");
 const subscriptionGroups = ref<AdminGroup[]>([]);
+const pricingGroups = ref<AdminGroup[]>([]);
 
 // Overload Cooldown (529) 状态
 const overloadCooldownLoading = ref(true);
@@ -7188,6 +7228,10 @@ const form = reactive<SettingsForm>({
   channel_monitor_default_interval_seconds: 60,
   // Available Channels feature switch
   available_channels_enabled: false,
+  // Model pricing page
+  pricing_page_enabled: false,
+  pricing_cny_rate: 7,
+  pricing_group_ids: [] as number[],
   // Affiliate (邀请返利) feature switch
   affiliate_enabled: false,
 });
@@ -7926,6 +7970,17 @@ async function loadSubscriptionGroups() {
   }
 }
 
+async function loadPricingGroups() {
+  try {
+    const groups = await adminAPI.groups.getAll();
+    pricingGroups.value = groups.filter(
+      (group) => group.status === "active" && !group.is_exclusive,
+    );
+  } catch (_error: unknown) {
+    pricingGroups.value = [];
+  }
+}
+
 function findNextAvailableSubscriptionGroup(
   existingGroupIDs: number[],
 ): AdminGroup | undefined {
@@ -8329,6 +8384,10 @@ async function saveSettings() {
         Number(form.channel_monitor_default_interval_seconds) || 60,
       // Available Channels feature switch
       available_channels_enabled: form.available_channels_enabled,
+      // Model pricing page
+      pricing_page_enabled: form.pricing_page_enabled,
+      pricing_cny_rate: Number(form.pricing_cny_rate) || 7,
+      pricing_group_ids: form.pricing_group_ids,
       // Affiliate (邀请返利) feature switch
       affiliate_enabled: form.affiliate_enabled,
     };
@@ -9244,6 +9303,7 @@ async function handleDeleteProvider() {
 onMounted(() => {
   loadSettings();
   loadSubscriptionGroups();
+  loadPricingGroups();
   loadAdminApiKey();
   loadOverloadCooldownSettings();
   loadRateLimit429CooldownSettings();

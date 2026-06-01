@@ -607,6 +607,11 @@ export interface SystemSettings {
   // Available Channels feature switch
   available_channels_enabled: boolean;
 
+  // Model pricing page
+  pricing_page_enabled: boolean;
+  pricing_cny_rate: number;
+  pricing_group_ids: number[];
+
   // Affiliate (邀请返利) feature switch
   affiliate_enabled: boolean;
 
@@ -836,6 +841,11 @@ export interface UpdateSettingsRequest {
 
   // Available Channels feature switch
   available_channels_enabled?: boolean;
+
+  // Model pricing page
+  pricing_page_enabled?: boolean;
+  pricing_cny_rate?: number;
+  pricing_group_ids?: number[];
 
   // Affiliate (邀请返利) feature switch
   affiliate_enabled?: boolean;
