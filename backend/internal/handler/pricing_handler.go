@@ -36,10 +36,12 @@ type pricingModel struct {
 }
 
 type pricingGroup struct {
-	ID             int64          `json:"id"`
-	Name           string         `json:"name"`
-	RateMultiplier float64        `json:"rate_multiplier"`
-	Models         []pricingModel `json:"models"`
+	ID               int64          `json:"id"`
+	Name             string         `json:"name"`
+	Description      string         `json:"description"`
+	RateMultiplier   float64        `json:"rate_multiplier"`
+	SubscriptionType string         `json:"subscription_type"`
+	Models           []pricingModel `json:"models"`
 }
 
 type pricingPlatform struct {
@@ -110,10 +112,12 @@ func (h *PricingHandler) Get(c *gin.Context) {
 			if !ok {
 				agg = &groupAgg{
 					group: &pricingGroup{
-						ID:             g.ID,
-						Name:           g.Name,
-						RateMultiplier: g.RateMultiplier,
-						Models:         []pricingModel{},
+						ID:               g.ID,
+						Name:             g.Name,
+						Description:      g.Description,
+						RateMultiplier:   g.RateMultiplier,
+						SubscriptionType: g.SubscriptionType,
+						Models:           []pricingModel{},
 					},
 					seen: map[string]struct{}{},
 				}
