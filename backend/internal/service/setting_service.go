@@ -950,6 +950,38 @@ func (s *SettingService) GetAvailableChannelsRuntime(ctx context.Context) Availa
 	}
 }
 
+// PricingPageRuntime holds the public pricing page display config.
+type PricingPageRuntime struct {
+	Enabled  bool
+	CNYRate  float64
+	GroupIDs []int64
+}
+
+// GetPricingPageRuntime reads the pricing page config directly from settings.
+// Fail-closed: on error returns Enabled=false. CNYRate defaults to 7 when unset/invalid.
+func (s *SettingService) GetPricingPageRuntime(ctx context.Context) PricingPageRuntime {
+	rt := PricingPageRuntime{CNYRate: 7.0}
+	vals, err := s.settingRepo.GetMultiple(ctx, []string{
+		SettingKeyPricingPageEnabled,
+		SettingKeyPricingCNYRate,
+		SettingKeyPricingGroupIDs,
+	})
+	if err != nil {
+		return rt
+	}
+	rt.Enabled = vals[SettingKeyPricingPageEnabled] == "true"
+	if v, err := strconv.ParseFloat(strings.TrimSpace(vals[SettingKeyPricingCNYRate]), 64); err == nil && v > 0 {
+		rt.CNYRate = v
+	}
+	if raw := strings.TrimSpace(vals[SettingKeyPricingGroupIDs]); raw != "" && raw != "[]" {
+		var ids []int64
+		if json.Unmarshal([]byte(raw), &ids) == nil {
+			rt.GroupIDs = ids
+		}
+	}
+	return rt
+}
+
 // GetAntigravityUserAgentVersion 返回 Antigravity 上游请求使用的版本号。
 // 后台设置优先；为空、缺失或非法时回退到 ANTIGRAVITY_USER_AGENT_VERSION / 内置默认值。
 func (s *SettingService) GetAntigravityUserAgentVersion(ctx context.Context) string {
