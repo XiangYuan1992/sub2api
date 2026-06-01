@@ -1,4 +1,30 @@
 export default {
+  // Model Pricing Page
+  pricing: {
+    title: '模型价格',
+    subtitle: '以人民币默认展示官方价格和分组价格，方便直接比较成本。',
+    nav: '模型价格',
+    rulesTitle: '计价规则',
+    rulesRate: '官方价格按 $1 = ¥{rate} 折算',
+    rulesFormula: '分组价格 = 官方价格 × 分组倍率',
+    listTitle: '价格列表',
+    listHint: '选择分组后，直接查看每个模型的人民币价格。',
+    groupPrice: '分组价格',
+    officialPrice: '官方价格',
+    groupIntro: '分组介绍',
+    colModel: '模型 ID',
+    colInput: '输入价格',
+    colOutput: '输出价格',
+    colCacheRead: '缓存读取',
+    colSaving: '节省幅度',
+    perM: '/ 1M tokens',
+    official: '官方价格',
+    saving: '省 {percent}%',
+    copy: '复制',
+    copied: '已复制',
+    empty: '暂无可展示的价格信息。',
+    disabled: '模型价格页面尚未开放。'
+  },
   // Home Page
   home: {
     viewOnGithub: '在 GitHub 上查看',

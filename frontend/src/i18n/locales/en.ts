@@ -1,4 +1,30 @@
 export default {
+  // Model Pricing Page
+  pricing: {
+    title: 'Model Pricing',
+    subtitle: 'Prices shown in CNY by default for easy cost comparison between official and group rates.',
+    nav: 'Pricing',
+    rulesTitle: 'Pricing Rules',
+    rulesRate: 'Official prices converted at $1 = ¥{rate}',
+    rulesFormula: 'Group price = Official price × Group multiplier',
+    listTitle: 'Price List',
+    listHint: 'Select a group to view each model price in CNY.',
+    groupPrice: 'Group Price',
+    officialPrice: 'Official Price',
+    groupIntro: 'Group Info',
+    colModel: 'Model ID',
+    colInput: 'Input',
+    colOutput: 'Output',
+    colCacheRead: 'Cache Read',
+    colSaving: 'Savings',
+    perM: '/ 1M tokens',
+    official: 'Official',
+    saving: 'Save {percent}%',
+    copy: 'Copy',
+    copied: 'Copied',
+    empty: 'No pricing information available.',
+    disabled: 'The model pricing page is not enabled yet.'
+  },
   // Home Page
   home: {
     viewOnGithub: 'View on GitHub',
