@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex min-h-screen flex-col overflow-hidden bg-gradient-to-br from-gray-50 via-primary-50/30 to-gray-100 dark:from-dark-950 dark:via-dark-900 dark:to-dark-950">
+  <div class="relative flex min-h-screen flex-col overflow-hidden bg-white dark:bg-dark-950">
     <header class="relative z-20 px-6 py-4">
       <nav class="mx-auto flex max-w-6xl items-center justify-between">
         <router-link to="/home" class="flex items-center gap-2">
@@ -10,6 +10,7 @@
         </router-link>
         <div class="flex items-center gap-3">
           <LocaleSwitcher />
+          <StyleSwitcher />
           <button @click="toggleTheme" class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-dark-400 dark:hover:bg-dark-800 dark:hover:text-white">
             <Icon v-if="isDark" name="sun" size="md" />
             <Icon v-else name="moon" size="md" />
@@ -23,46 +24,46 @@
 
     <main class="relative z-10 flex-1 px-6 py-10">
       <div class="mx-auto max-w-6xl">
-        <h1 class="mb-2 text-4xl font-bold text-gray-900 dark:text-white">{{ t('pricing.title') }}</h1>
+        <h1 class="mb-2 text-4xl font-semibold tracking-tight text-gray-900 dark:text-white">{{ t('pricing.title') }}</h1>
         <p class="mb-8 text-gray-600 dark:text-dark-300">{{ t('pricing.subtitle') }}</p>
 
         <div v-if="loading" class="py-20 text-center">
           <Icon name="refresh" size="xl" class="inline-block animate-spin text-gray-400" />
         </div>
 
-        <div v-else-if="!data?.enabled || platforms.length === 0" class="card p-12 text-center text-gray-500 dark:text-dark-400">
+        <div v-else-if="!data?.enabled || platforms.length === 0" class="rounded-lg border border-gray-200 p-12 text-center text-gray-500 dark:border-dark-700 dark:text-dark-400">
           {{ data && !data.enabled ? t('pricing.disabled') : t('pricing.empty') }}
         </div>
 
         <template v-else>
-          <div class="card mb-4 flex gap-2 p-2">
+          <div class="mb-6 flex gap-6 border-b border-gray-200 dark:border-dark-700">
             <button
               v-for="p in platforms"
               :key="p.platform"
               @click="activePlatform = p.platform"
               :class="[
-                'flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium transition-colors',
+                'flex items-center gap-2 border-b-2 px-1 pb-3 text-sm font-medium transition-colors -mb-px',
                 activePlatform === p.platform
-                  ? 'bg-primary-50 text-primary-700 ring-1 ring-primary-300 dark:bg-primary-900/30 dark:text-primary-300'
-                  : 'text-gray-600 hover:bg-gray-50 dark:text-dark-300 dark:hover:bg-dark-800'
+                  ? 'border-gray-900 text-gray-900 dark:border-white dark:text-white'
+                  : 'border-transparent text-gray-500 hover:text-gray-800 dark:text-dark-400 dark:hover:text-dark-200'
               ]"
             >
               {{ platformLabel(p.platform) }}
             </button>
           </div>
 
-          <div class="card mb-4 flex flex-wrap items-center gap-x-6 gap-y-2 p-4 text-sm">
-            <span class="font-semibold text-gray-900 dark:text-white">{{ t('pricing.rulesTitle') }}</span>
-            <span class="text-gray-600 dark:text-dark-300">{{ t('pricing.rulesRate', { rate: cnyRate }) }}</span>
-            <span class="text-gray-600 dark:text-dark-300">{{ t('pricing.rulesFormula') }}</span>
+          <div class="mb-6 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-lg border border-gray-200 px-4 py-3 text-sm dark:border-dark-700">
+            <span class="font-medium text-gray-900 dark:text-white">{{ t('pricing.rulesTitle') }}</span>
+            <span class="text-gray-500 dark:text-dark-400">{{ t('pricing.rulesRate', { rate: cnyRate }) }}</span>
+            <span class="text-gray-500 dark:text-dark-400">{{ t('pricing.rulesFormula') }}</span>
           </div>
 
-          <div class="card p-6">
+          <div>
             <div class="mb-4 flex items-center justify-between">
               <h2 class="text-lg font-semibold text-gray-900 dark:text-white">{{ t('pricing.listTitle') }}</h2>
-              <div class="flex rounded-lg bg-gray-100 p-0.5 dark:bg-dark-800">
-                <button @click="showOfficial = false" :class="['rounded-md px-3 py-1 text-xs font-medium', !showOfficial ? 'bg-primary-600 text-white' : 'text-gray-600 dark:text-dark-300']">{{ t('pricing.groupPrice') }}</button>
-                <button @click="showOfficial = true" :class="['rounded-md px-3 py-1 text-xs font-medium', showOfficial ? 'bg-primary-600 text-white' : 'text-gray-600 dark:text-dark-300']">{{ t('pricing.officialPrice') }}</button>
+              <div class="flex rounded-lg border border-gray-200 p-0.5 dark:border-dark-700">
+                <button @click="showOfficial = false" :class="['rounded-md px-3 py-1 text-xs font-medium transition-colors', !showOfficial ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'text-gray-500 dark:text-dark-400']">{{ t('pricing.groupPrice') }}</button>
+                <button @click="showOfficial = true" :class="['rounded-md px-3 py-1 text-xs font-medium transition-colors', showOfficial ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900' : 'text-gray-500 dark:text-dark-400']">{{ t('pricing.officialPrice') }}</button>
               </div>
             </div>
 
@@ -72,21 +73,21 @@
                 :key="g.id"
                 @click="activeGroupId = g.id"
                 :class="[
-                  'rounded-xl border px-5 py-3 text-left transition-colors',
+                  'rounded-lg border px-5 py-3 text-left transition-colors',
                   activeGroupId === g.id
-                    ? 'border-primary-400 bg-primary-50/50 ring-1 ring-primary-300 dark:bg-primary-900/20'
-                    : 'border-gray-200 hover:border-primary-200 dark:border-dark-700'
+                    ? 'border-gray-900 dark:border-white'
+                    : 'border-gray-200 hover:border-gray-300 dark:border-dark-700 dark:hover:border-dark-600'
                 ]"
               >
                 <div class="flex items-center gap-2">
                   <span class="font-semibold text-gray-900 dark:text-white">{{ g.name }}</span>
-                  <span v-if="g.rate_multiplier < 1" class="rounded-full bg-primary-100 px-2 py-0.5 text-[10px] font-medium text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">{{ discountLabel(g.rate_multiplier) }}</span>
+                  <span v-if="g.rate_multiplier < 1" class="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600 dark:bg-dark-700 dark:text-dark-200">{{ discountLabel(g.rate_multiplier) }}</span>
                 </div>
                 <div class="mt-1 text-xs text-gray-500 dark:text-dark-400">{{ g.rate_multiplier }}x</div>
               </button>
             </div>
 
-            <div v-if="activeGroup?.description" class="mb-4 rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-600 dark:bg-dark-800/50 dark:text-dark-300">
+            <div v-if="activeGroup?.description" class="mb-4 rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-600 dark:border-dark-700 dark:text-dark-300">
               <span class="font-medium text-gray-900 dark:text-white">{{ t('pricing.groupIntro') }}：</span>{{ activeGroup.description }}
             </div>
 
@@ -104,7 +105,7 @@
                 <tbody>
                   <tr v-for="m in activeGroup?.models || []" :key="m.name" class="border-b border-gray-50 last:border-0 dark:border-dark-800">
                     <td class="px-4 py-4">
-                      <button class="inline-flex items-center gap-1.5 font-medium text-gray-900 hover:text-primary-600 dark:text-white" @click="copyModel(m.name)">
+                      <button class="inline-flex items-center gap-1.5 font-medium text-gray-900 hover:text-gray-600 dark:text-white dark:hover:text-dark-300" @click="copyModel(m.name)">
                         {{ m.name }}
                         <Icon name="copy" size="xs" class="text-gray-400" />
                       </button>
@@ -113,7 +114,7 @@
                     <td class="px-4 py-4"><PriceCell :perTokenUsd="m.output_price" /></td>
                     <td class="px-4 py-4"><PriceCell :perTokenUsd="m.cache_read_price" /></td>
                     <td v-if="!showOfficial" class="px-4 py-4">
-                      <span v-if="activeGroup && savingPercent(activeGroup.rate_multiplier) > 0" class="rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                      <span v-if="activeGroup && savingPercent(activeGroup.rate_multiplier) > 0" class="text-xs font-medium text-green-600 dark:text-green-400">
                         {{ t('pricing.saving', { percent: savingPercent(activeGroup.rate_multiplier) }) }}
                       </span>
                       <span v-else class="text-gray-400">-</span>
@@ -134,6 +135,7 @@ import { ref, computed, onMounted, watch, h, defineComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore, useAppStore } from '@/stores'
 import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
+import StyleSwitcher from '@/components/common/StyleSwitcher.vue'
 import Icon from '@/components/icons/Icon.vue'
 import { getPricing, type PricingResponse, type PricingGroup } from '@/api/pricing'
 import { officialCny, groupCny, discountLabel, savingPercent } from './pricingCalc'
