@@ -361,6 +361,15 @@ const (
 	// sidebar entry is hidden. Defaults to false (opt-in feature).
 	SettingKeyAvailableChannelsEnabled = "available_channels_enabled"
 
+	// SettingKeyPricingPageEnabled is a DB-backed soft switch for the public model
+	// pricing page. Defaults to false (opt-in).
+	SettingKeyPricingPageEnabled = "pricing_page_enabled"
+	// SettingKeyPricingCNYRate is the USD→CNY display rate ($1 = ¥rate). Defaults to 7.
+	SettingKeyPricingCNYRate = "pricing_cny_rate"
+	// SettingKeyPricingGroupIDs is a JSON int array of group IDs shown on the pricing
+	// page. Empty/absent = all active non-exclusive groups.
+	SettingKeyPricingGroupIDs = "pricing_group_ids"
+
 	// =========================
 	// Overload Cooldown (529)
 	// =========================
