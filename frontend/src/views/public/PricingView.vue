@@ -138,7 +138,7 @@ import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 import StyleSwitcher from '@/components/common/StyleSwitcher.vue'
 import Icon from '@/components/icons/Icon.vue'
 import { getPricing, type PricingResponse, type PricingGroup } from '@/api/pricing'
-import { officialCny, groupCny, discountLabel, savingPercent } from './pricingCalc'
+import { officialCny, groupCny, officialUsd, groupUsd, discountLabel, savingPercent } from './pricingCalc'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -180,22 +180,31 @@ const PriceCell = defineComponent({
     return () => {
       const rate = cnyRate.value
       const mult = activeGroup.value?.rate_multiplier ?? 1
-      const official = officialCny(props.perTokenUsd, rate)
-      const fmt = (v: number | null) => (v == null ? '-' : `¥${v.toFixed(2)}`)
+      const fmtCny = (v: number | null) => (v == null ? '-' : `¥${v.toFixed(2)}`)
+      const fmtUsd = (v: number | null) => (v == null ? '' : `$${v.toFixed(2)}`)
+      const perM = h('span', { class: 'ml-1 text-xs text-gray-400' }, t('pricing.perM'))
+
       if (showOfficial.value) {
-        return h('div', { class: 'font-medium text-gray-900 dark:text-white' }, [
-          fmt(official),
-          h('span', { class: 'ml-1 text-xs text-gray-400' }, t('pricing.perM'))
+        const cny = officialCny(props.perTokenUsd, rate)
+        const usd = officialUsd(props.perTokenUsd)
+        return h('div', {}, [
+          h('div', { class: 'font-medium text-gray-900 dark:text-white' }, [fmtCny(cny), perM]),
+          usd != null
+            ? h('div', { class: 'text-xs text-gray-400' }, fmtUsd(usd))
+            : null
         ])
       }
-      const gp = groupCny(props.perTokenUsd, rate, mult)
+
+      const gpCny = groupCny(props.perTokenUsd, rate, mult)
+      const gpUsd = groupUsd(props.perTokenUsd, mult)
+      const officialCnyVal = officialCny(props.perTokenUsd, rate)
       return h('div', {}, [
-        h('div', { class: 'font-semibold text-primary-600 dark:text-primary-400' }, [
-          fmt(gp),
-          h('span', { class: 'ml-1 text-xs text-gray-400' }, t('pricing.perM'))
-        ]),
-        official != null
-          ? h('div', { class: 'text-xs text-gray-400 line-through' }, `${t('pricing.official')} ${fmt(official)}`)
+        h('div', { class: 'font-semibold text-primary-600 dark:text-primary-400' }, [fmtCny(gpCny), perM]),
+        gpUsd != null
+          ? h('div', { class: 'text-xs text-gray-500 dark:text-dark-400' }, fmtUsd(gpUsd))
+          : null,
+        officialCnyVal != null
+          ? h('div', { class: 'text-xs text-gray-400 line-through' }, `${t('pricing.official')} ${fmtCny(officialCnyVal)}`)
           : null
       ])
     }
