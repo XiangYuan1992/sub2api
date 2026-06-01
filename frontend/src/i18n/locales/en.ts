@@ -13,7 +13,6 @@ export default {
     rulesRate: 'Official prices converted at $1 = ¥{rate}',
     rulesSiteRate: 'Our actual prices converted at $1 = ¥{rate}',
     rulesFormula: 'Group price = Official price × Group multiplier',
-    rulesSaving: 'Savings = (Official ¥ − Our ¥) ÷ Official ¥',
     listTitle: 'Price List',
     listHint: 'Select a group to view each model price in CNY.',
     groupPrice: 'Group Price',
@@ -583,6 +582,8 @@ export default {
     sessionExpiredDesc: 'Please go back to the registration page and start again.',
     verificationCode: 'Verification Code',
     verificationCodeHint: 'Enter the 6-digit code sent to your email',
+    verifyCodeSpamHint:
+      'Tip: If you have not received the code after a while, check your spam or junk folder, or add the sender to your allowlist and try again.',
     sendingCode: 'Sending...',
     sendCode: 'Send code',
     clickToResend: 'Click to resend code',

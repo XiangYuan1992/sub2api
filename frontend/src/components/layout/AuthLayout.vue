@@ -31,9 +31,9 @@
         <!-- Custom Logo or Default Logo -->
         <template v-if="settingsLoaded">
           <div
-            class="mb-4 inline-flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl shadow-lg shadow-primary-500/30"
+            class="mb-4 inline-flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl text-gray-900 shadow-lg shadow-primary-500/30 dark:text-white"
           >
-            <img :src="siteLogo || '/logo.png'" alt="Logo" class="h-full w-full object-contain" />
+            <BrandLogo :src="siteLogo" alt="壹站 Logo" :stroke-width="24" />
           </div>
           <h1 class="text-gradient mb-2 text-3xl font-bold">
             {{ siteName }}
@@ -64,6 +64,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
+import BrandLogo from '@/components/common/BrandLogo.vue'
 import { useAppStore } from '@/stores'
 import { sanitizeUrl } from '@/utils/url'
 

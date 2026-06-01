@@ -27,10 +27,16 @@ export function groupCny(
   return usd == null ? null : usd * rateMultiplier * siteCnyRate(rechargeMultiplier)
 }
 
-/** 折扣标签：倍率 × 10 折（去掉末尾 .0）。 */
-export function discountLabel(multiplier: number): string {
-  const v = Math.round(multiplier * 10 * 10) / 10
+/** 折扣标签：相对官方价的实际比例 × 10 折（去掉末尾 .0）。 */
+export function discountLabel(priceRatio: number): string {
+  const v = Math.round(priceRatio * 10 * 10) / 10
   return `${v}折`
+}
+
+/** 按节省幅度反推折扣标签：实际付费占官方价比例 × 10 折。 */
+export function discountLabelFromSaving(savingPct: number): string {
+  if (savingPct <= 0) return ''
+  return discountLabel(1 - savingPct / 100)
 }
 
 /** 节省幅度 % = (官方¥ − 实际¥) / 官方¥ × 100，保留 1 位小数；≤0 返回 0。 */

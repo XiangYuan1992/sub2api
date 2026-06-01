@@ -13,7 +13,6 @@ export default {
     rulesRate: '官方价格按 $1 = ¥{rate} 折算',
     rulesSiteRate: '本站实际价格按 $1 = ¥{rate} 折算',
     rulesFormula: '分组价格 = 官方价格 × 分组倍率',
-    rulesSaving: '节省幅度 = (官方价格¥ − 本站价格¥) ÷ 官方价格¥',
     listTitle: '价格列表',
     listHint: '选择分组后，直接查看每个模型的人民币价格。',
     groupPrice: '分组价格',
@@ -582,6 +581,8 @@ export default {
     sessionExpiredDesc: '请返回注册页面重新开始。',
     verificationCode: '验证码',
     verificationCodeHint: '请输入发送到您邮箱的6位验证码',
+    verifyCodeSpamHint:
+      '温馨提示：如果等了较久还没收到验证码，建议先检查邮箱的「垃圾邮件」或「垃圾箱」，必要时将发件地址加入白名单后再试。',
     sendingCode: '发送中...',
     sendCode: '发送验证码',
     clickToResend: '点击重新发送验证码',

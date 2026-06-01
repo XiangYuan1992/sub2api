@@ -5,6 +5,7 @@ import {
   siteCnyRate,
   groupCny,
   discountLabel,
+  discountLabelFromSaving,
   savingPercent,
   modelVersion,
   sortModelsByVersionDesc
@@ -49,10 +50,17 @@ describe('pricingCalc', () => {
     expect(groupCny(null, 0.2, 0.5)).toBeNull()
   })
 
-  it('discountLabel = multiplier * 10 折', () => {
+  it('discountLabel = price ratio * 10 折', () => {
     expect(discountLabel(0.5)).toBe('5折')
     expect(discountLabel(0.7)).toBe('7折')
     expect(discountLabel(0.35)).toBe('3.5折')
+    expect(discountLabel(0.051)).toBe('0.5折')
+  })
+
+  it('discountLabelFromSaving derives 折 from saving percent', () => {
+    expect(discountLabelFromSaving(94.9)).toBe('0.5折')
+    expect(discountLabelFromSaving(64.3)).toBe('3.6折')
+    expect(discountLabelFromSaving(0)).toBe('')
   })
 
   it('savingPercent = (官方¥ − 实际¥) / 官方¥', () => {

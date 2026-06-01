@@ -3,8 +3,8 @@
     <nav class="mx-auto flex max-w-6xl items-center justify-between">
       <!-- Logo + site name -->
       <router-link to="/home" class="flex items-center gap-2">
-        <div class="h-10 w-10 overflow-hidden rounded-xl shadow-md">
-          <img :src="siteLogo || '/logo.png'" alt="Logo" class="h-full w-full object-contain" />
+        <div class="h-10 w-10 overflow-hidden rounded-xl text-gray-900 shadow-md dark:text-white">
+          <BrandLogo :src="siteLogo" alt="壹站 Logo" :stroke-width="24" />
         </div>
         <span class="text-lg font-bold text-gray-900 dark:text-white">{{ siteName }}</span>
       </router-link>
@@ -51,6 +51,7 @@ import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore, useAppStore } from '@/stores'
+import BrandLogo from '@/components/common/BrandLogo.vue'
 import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 import StyleSwitcher from '@/components/common/StyleSwitcher.vue'
 import Icon from '@/components/icons/Icon.vue'

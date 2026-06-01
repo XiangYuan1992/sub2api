@@ -1,0 +1,19 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>壹站 - one-router.com</title>
+  <desc>Black and white geometric logo mark for 壹站 at one-router.com.</desc>
+  <style>
+    :root { color: #111111; }
+    @media (prefers-color-scheme: dark) {
+      :root { color: #f5f5f5; }
+    }
+  </style>
+  <g stroke="currentColor" stroke-width="24" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="88" y="72" width="336" height="368" rx="88"/>
+    <path d="M164 154H348"/>
+    <path d="M196 220H316"/>
+    <path d="M196 220V330"/>
+    <path d="M316 220V330"/>
+    <path d="M170 330H342"/>
+    <path d="M170 330L256 256L342 330"/>
+  </g>
+</svg>

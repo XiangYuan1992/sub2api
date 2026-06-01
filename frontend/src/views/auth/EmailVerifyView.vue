@@ -49,6 +49,12 @@
             placeholder="000000"
           />
           <p class="input-hint text-center">{{ t('auth.verificationCodeHint') }}</p>
+          <p
+            class="mt-3 flex items-start gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-left text-xs leading-relaxed text-gray-600 dark:border-dark-700 dark:bg-dark-800/60 dark:text-dark-300"
+          >
+            <Icon name="infoCircle" size="sm" class="mt-0.5 shrink-0 text-gray-400 dark:text-dark-400" />
+            <span>{{ t('auth.verifyCodeSpamHint') }}</span>
+          </p>
         </div>
 
         <!-- Code Status -->

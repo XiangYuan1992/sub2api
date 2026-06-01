@@ -37,7 +37,6 @@
             <span class="text-gray-500 dark:text-dark-400">{{ t('pricing.rulesRate', { rate: cnyRate }) }}</span>
             <span class="text-gray-500 dark:text-dark-400">{{ t('pricing.rulesSiteRate', { rate: siteRate.toFixed(2) }) }}</span>
             <span class="text-gray-500 dark:text-dark-400">{{ t('pricing.rulesFormula') }}</span>
-            <span class="text-gray-500 dark:text-dark-400">{{ t('pricing.rulesSaving') }}</span>
           </div>
 
           <div>
@@ -63,7 +62,10 @@
               >
                 <div class="flex items-center gap-2">
                   <span class="font-semibold text-gray-900 dark:text-white">{{ g.name }}</span>
-                  <span v-if="g.rate_multiplier < 1" class="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600 dark:bg-dark-700 dark:text-dark-200">{{ discountLabel(g.rate_multiplier) }}</span>
+                  <span
+                    v-if="groupSavingPercent(g) > 0"
+                    class="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600 dark:bg-dark-700 dark:text-dark-200"
+                  >{{ discountLabelFromSaving(groupSavingPercent(g)) }}</span>
                 </div>
                 <div class="mt-1 text-xs text-gray-500 dark:text-dark-400">{{ g.rate_multiplier }}x</div>
               </button>
@@ -119,7 +121,15 @@ import { useAuthStore, useAppStore } from '@/stores'
 import PublicNav from '@/components/common/PublicNav.vue'
 import Icon from '@/components/icons/Icon.vue'
 import { getPricing, type PricingResponse, type PricingGroup } from '@/api/pricing'
-import { officialCny, officialUsd, groupCny, siteCnyRate, discountLabel, savingPercent, sortModelsByVersionDesc } from './pricingCalc'
+import {
+  officialCny,
+  officialUsd,
+  groupCny,
+  siteCnyRate,
+  discountLabelFromSaving,
+  savingPercent,
+  sortModelsByVersionDesc
+} from './pricingCalc'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -150,6 +160,10 @@ const platformLabels: Record<string, string> = {
 }
 function platformLabel(p: string): string {
   return platformLabels[p] || p
+}
+
+function groupSavingPercent(g: PricingGroup): number {
+  return savingPercent(rechargeMultiplier.value, g.rate_multiplier, cnyRate.value)
 }
 
 const PriceCell = defineComponent({

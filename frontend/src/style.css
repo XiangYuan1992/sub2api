@@ -127,6 +127,13 @@
     @apply dark:shadow-primary-500/20;
   }
 
+  /* OpenAI 暗色：primary 反相为浅灰，主按钮须深字浅底，避免白字 on 浅底 */
+  html.dark:not([data-theme='classic']) .btn-primary {
+    @apply bg-gradient-to-r from-neutral-100 to-neutral-200 text-neutral-950;
+    @apply shadow-md shadow-black/25;
+    @apply hover:from-white hover:to-neutral-100 hover:text-neutral-950 hover:shadow-lg hover:shadow-black/30;
+  }
+
   .btn-secondary {
     @apply bg-white dark:bg-dark-800;
     @apply text-gray-700 dark:text-gray-200;

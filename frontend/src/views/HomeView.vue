@@ -40,7 +40,7 @@
           <!-- Right: Model hub -->
           <div class="flex flex-1 justify-center lg:justify-end">
             <div class="relative h-72 w-72">
-              <div class="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl bg-primary-600 text-white shadow-lg dark:bg-primary-500 dark:text-gray-900">
+              <div class="absolute left-1/2 top-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl bg-gray-900 text-white shadow-lg dark:bg-neutral-100 dark:text-gray-900 dark:shadow-black/30">
                 <Icon name="menu" size="lg" />
               </div>
               <div

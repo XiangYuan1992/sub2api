@@ -58,6 +58,12 @@
     <p v-else class="text-xs text-gray-500 dark:text-dark-400">
       {{ t('auth.verificationCodeHint') }}
     </p>
+    <p
+      class="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-800 dark:border-amber-900/60 dark:bg-amber-950/30 dark:text-amber-200"
+    >
+      <span class="shrink-0 font-medium">{{ t('common.tip') }}：</span>
+      <span>{{ t('auth.verifyCodeSpamHint') }}</span>
+    </p>
     <input
       v-if="invitationCodeEnabled"
       v-model="invitationCode"
