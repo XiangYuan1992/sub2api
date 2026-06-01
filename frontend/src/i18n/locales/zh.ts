@@ -1,4 +1,9 @@
 export default {
+  // Theme / UI style
+  theme: {
+    switchToClassic: '切换到青色经典风格',
+    switchToOpenai: '切换到 OpenAI 风格'
+  },
   // Model Pricing Page
   pricing: {
     title: '模型价格',

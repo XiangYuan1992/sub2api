@@ -4,6 +4,7 @@ import App from './App.vue'
 import router from './router'
 import i18n, { initI18n } from './i18n'
 import { useAppStore } from '@/stores/app'
+import { applyUiStyle } from '@/composables/useUiStyle'
 import './style.css'
 
 function initThemeClass() {
@@ -12,6 +13,8 @@ function initThemeClass() {
     savedTheme === 'dark' ||
     (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)
   document.documentElement.classList.toggle('dark', shouldUseDark)
+  // Apply UI style (openai default / classic) independently of dark mode.
+  applyUiStyle(localStorage.getItem('ui-style') === 'classic' ? 'classic' : 'openai')
 }
 
 async function bootstrap() {

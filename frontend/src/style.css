@@ -3,6 +3,52 @@
 @tailwind utilities;
 
 @layer base {
+  /* ============ 风格主题变量（与明暗模式独立） ============ */
+  /* 默认 = OpenAI 风格：中性近黑灰阶强调色 */
+  :root {
+    --color-primary-50: 247 247 248;
+    --color-primary-100: 236 236 241;
+    --color-primary-200: 217 217 227;
+    --color-primary-300: 142 142 160;
+    --color-primary-400: 86 88 105;
+    --color-primary-500: 52 53 65;
+    --color-primary-600: 32 33 35;
+    --color-primary-700: 13 13 13;
+    --color-primary-800: 9 9 11;
+    --color-primary-900: 5 5 7;
+    --color-primary-950: 0 0 0;
+  }
+
+  /* classic = 现有青色 Teal 风格 */
+  [data-theme='classic'] {
+    --color-primary-50: 240 253 250;
+    --color-primary-100: 204 251 241;
+    --color-primary-200: 153 246 228;
+    --color-primary-300: 94 234 212;
+    --color-primary-400: 45 212 191;
+    --color-primary-500: 20 184 166;
+    --color-primary-600: 13 148 136;
+    --color-primary-700: 15 118 110;
+    --color-primary-800: 17 94 89;
+    --color-primary-900: 19 78 74;
+    --color-primary-950: 4 47 46;
+  }
+
+  /* 暗色 + OpenAI 风格：强调色反相为浅灰，保证按钮文字对比 */
+  html.dark:not([data-theme='classic']) {
+    --color-primary-400: 142 142 160;
+    --color-primary-500: 217 217 227;
+    --color-primary-600: 236 236 241;
+    --color-primary-700: 247 247 248;
+  }
+
+  html.dark[data-theme='classic'] {
+    --color-primary-400: 45 212 191;
+    --color-primary-500: 20 184 166;
+    --color-primary-600: 13 148 136;
+    --color-primary-700: 15 118 110;
+  }
+
   * {
     @apply border-gray-200 dark:border-dark-700;
   }

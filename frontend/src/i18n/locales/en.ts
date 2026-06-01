@@ -1,4 +1,9 @@
 export default {
+  // Theme / UI style
+  theme: {
+    switchToClassic: 'Switch to classic teal style',
+    switchToOpenai: 'Switch to OpenAI style'
+  },
   // Model Pricing Page
   pricing: {
     title: 'Model Pricing',
