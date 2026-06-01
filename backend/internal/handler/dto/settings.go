@@ -241,6 +241,11 @@ type SystemSettings struct {
 	// Available Channels feature switch (user-facing aggregate view)
 	AvailableChannelsEnabled bool `json:"available_channels_enabled"`
 
+	// Pricing page feature switch
+	PricingPageEnabled bool    `json:"pricing_page_enabled"`
+	PricingCNYRate     float64 `json:"pricing_cny_rate"`
+	PricingGroupIDs    []int64 `json:"pricing_group_ids"`
+
 	// 风控中心功能开关
 	RiskControlEnabled bool `json:"risk_control_enabled"`
 
@@ -312,6 +317,8 @@ type PublicSettings struct {
 	ChannelMonitorDefaultIntervalSeconds int  `json:"channel_monitor_default_interval_seconds"`
 
 	AvailableChannelsEnabled bool `json:"available_channels_enabled"`
+
+	PricingPageEnabled bool `json:"pricing_page_enabled"`
 
 	AffiliateEnabled bool `json:"affiliate_enabled"`
 

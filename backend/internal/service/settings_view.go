@@ -288,6 +288,9 @@ type PublicSettings struct {
 	// Available Channels feature (user-facing aggregate view)
 	AvailableChannelsEnabled bool `json:"available_channels_enabled"`
 
+	// Pricing page feature (public model pricing display)
+	PricingPageEnabled bool `json:"pricing_page_enabled"`
+
 	// Affiliate (邀请返利) feature toggle
 	AffiliateEnabled bool `json:"affiliate_enabled"`
 
