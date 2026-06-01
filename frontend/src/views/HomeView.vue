@@ -48,6 +48,15 @@
 
         <!-- Nav Actions -->
         <div class="flex items-center gap-3">
+          <!-- Pricing Link -->
+          <router-link
+            v-if="pricingEnabled"
+            to="/pricing"
+            class="rounded-lg px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:text-primary-600 dark:text-dark-300 dark:hover:text-primary-400"
+          >
+            {{ t('pricing.nav') }}
+          </router-link>
+
           <!-- Language Switcher -->
           <LocaleSwitcher />
 
@@ -422,6 +431,7 @@ const siteLogo = computed(() => appStore.cachedPublicSettings?.site_logo || appS
 const siteSubtitle = computed(() => appStore.cachedPublicSettings?.site_subtitle || 'AI API Gateway Platform')
 const docUrl = computed(() => appStore.cachedPublicSettings?.doc_url || appStore.docUrl || '')
 const homeContent = computed(() => appStore.cachedPublicSettings?.home_content || '')
+const pricingEnabled = computed(() => appStore.cachedPublicSettings?.pricing_page_enabled === true)
 
 // Check if homeContent is a URL (for iframe display)
 const isHomeContentUrl = computed(() => {
