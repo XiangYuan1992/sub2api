@@ -1,26 +1,6 @@
 <template>
   <div class="relative flex min-h-screen flex-col overflow-hidden bg-white dark:bg-dark-950">
-    <header class="relative z-20 px-6 py-4">
-      <nav class="mx-auto flex max-w-6xl items-center justify-between">
-        <router-link to="/home" class="flex items-center gap-2">
-          <div class="h-10 w-10 overflow-hidden rounded-xl shadow-md">
-            <img :src="siteLogo || '/logo.png'" alt="Logo" class="h-full w-full object-contain" />
-          </div>
-          <span class="text-lg font-bold text-gray-900 dark:text-white">{{ siteName }}</span>
-        </router-link>
-        <div class="flex items-center gap-3">
-          <LocaleSwitcher />
-          <StyleSwitcher />
-          <button @click="toggleTheme" class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-dark-400 dark:hover:bg-dark-800 dark:hover:text-white">
-            <Icon v-if="isDark" name="sun" size="md" />
-            <Icon v-else name="moon" size="md" />
-          </button>
-          <router-link :to="isAuthenticated ? dashboardPath : '/login'" class="inline-flex items-center rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white hover:bg-gray-800 dark:bg-gray-800">
-            {{ isAuthenticated ? t('home.dashboard') : t('home.login') }}
-          </router-link>
-        </div>
-      </nav>
-    </header>
+    <PublicNav />
 
     <main class="relative z-10 flex-1 px-6 py-10">
       <div class="mx-auto max-w-6xl">
@@ -55,7 +35,9 @@
           <div class="mb-6 flex flex-wrap items-center gap-x-6 gap-y-2 rounded-lg border border-gray-200 px-4 py-3 text-sm dark:border-dark-700">
             <span class="font-medium text-gray-900 dark:text-white">{{ t('pricing.rulesTitle') }}</span>
             <span class="text-gray-500 dark:text-dark-400">{{ t('pricing.rulesRate', { rate: cnyRate }) }}</span>
+            <span class="text-gray-500 dark:text-dark-400">{{ t('pricing.rulesSiteRate', { rate: siteRate.toFixed(2) }) }}</span>
             <span class="text-gray-500 dark:text-dark-400">{{ t('pricing.rulesFormula') }}</span>
+            <span class="text-gray-500 dark:text-dark-400">{{ t('pricing.rulesSaving') }}</span>
           </div>
 
           <div>
@@ -103,7 +85,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="m in activeGroup?.models || []" :key="m.name" class="border-b border-gray-50 last:border-0 dark:border-dark-800">
+                  <tr v-for="m in sortedModels" :key="m.name" class="border-b border-gray-50 last:border-0 dark:border-dark-800">
                     <td class="px-4 py-4">
                       <button class="inline-flex items-center gap-1.5 font-medium text-gray-900 hover:text-gray-600 dark:text-white dark:hover:text-dark-300" @click="copyModel(m.name)">
                         {{ m.name }}
@@ -114,8 +96,8 @@
                     <td class="px-4 py-4"><PriceCell :perTokenUsd="m.output_price" /></td>
                     <td class="px-4 py-4"><PriceCell :perTokenUsd="m.cache_read_price" /></td>
                     <td v-if="!showOfficial" class="px-4 py-4">
-                      <span v-if="activeGroup && savingPercent(activeGroup.rate_multiplier) > 0" class="text-xs font-medium text-green-600 dark:text-green-400">
-                        {{ t('pricing.saving', { percent: savingPercent(activeGroup.rate_multiplier) }) }}
+                      <span v-if="activeGroup && savingPercent(rechargeMultiplier, activeGroup.rate_multiplier, cnyRate) > 0" class="text-xs font-medium text-green-600 dark:text-green-400">
+                        {{ t('pricing.saving', { percent: savingPercent(rechargeMultiplier, activeGroup.rate_multiplier, cnyRate) }) }}
                       </span>
                       <span v-else class="text-gray-400">-</span>
                     </td>
@@ -134,11 +116,10 @@
 import { ref, computed, onMounted, watch, h, defineComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore, useAppStore } from '@/stores'
-import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
-import StyleSwitcher from '@/components/common/StyleSwitcher.vue'
+import PublicNav from '@/components/common/PublicNav.vue'
 import Icon from '@/components/icons/Icon.vue'
 import { getPricing, type PricingResponse, type PricingGroup } from '@/api/pricing'
-import { officialCny, groupCny, officialUsd, groupUsd, discountLabel, savingPercent } from './pricingCalc'
+import { officialCny, officialUsd, groupCny, siteCnyRate, discountLabel, savingPercent, sortModelsByVersionDesc } from './pricingCalc'
 
 const { t } = useI18n()
 const authStore = useAuthStore()
@@ -150,13 +131,9 @@ const activePlatform = ref('')
 const activeGroupId = ref<number | null>(null)
 const showOfficial = ref(false)
 
-const siteName = computed(() => appStore.cachedPublicSettings?.site_name || appStore.siteName || 'Sub2API')
-const siteLogo = computed(() => appStore.cachedPublicSettings?.site_logo || appStore.siteLogo || '')
-const isDark = ref(document.documentElement.classList.contains('dark'))
-const isAuthenticated = computed(() => authStore.isAuthenticated)
-const dashboardPath = computed(() => (authStore.isAdmin ? '/admin/dashboard' : '/dashboard'))
-
 const cnyRate = computed(() => data.value?.cny_rate ?? 7)
+const rechargeMultiplier = computed(() => data.value?.recharge_multiplier ?? 1)
+const siteRate = computed(() => siteCnyRate(rechargeMultiplier.value))
 const platforms = computed(() => data.value?.platforms ?? [])
 const currentGroups = computed<PricingGroup[]>(
   () => platforms.value.find((p) => p.platform === activePlatform.value)?.groups ?? []
@@ -164,6 +141,7 @@ const currentGroups = computed<PricingGroup[]>(
 const activeGroup = computed<PricingGroup | undefined>(
   () => currentGroups.value.find((g) => g.id === activeGroupId.value)
 )
+const sortedModels = computed(() => sortModelsByVersionDesc(activeGroup.value?.models ?? []))
 
 const platformLabels: Record<string, string> = {
   anthropic: 'Claude Code',
@@ -195,16 +173,13 @@ const PriceCell = defineComponent({
         ])
       }
 
-      const gpCny = groupCny(props.perTokenUsd, rate, mult)
-      const gpUsd = groupUsd(props.perTokenUsd, mult)
+      const gpCny = groupCny(props.perTokenUsd, rechargeMultiplier.value, mult)
+      const officialUsdVal = officialUsd(props.perTokenUsd)
       const officialCnyVal = officialCny(props.perTokenUsd, rate)
       return h('div', {}, [
         h('div', { class: 'font-semibold text-primary-600 dark:text-primary-400' }, [fmtCny(gpCny), perM]),
-        gpUsd != null
-          ? h('div', { class: 'text-xs text-gray-500 dark:text-dark-400' }, fmtUsd(gpUsd))
-          : null,
-        officialCnyVal != null
-          ? h('div', { class: 'text-xs text-gray-400 line-through' }, `${t('pricing.official')} ${fmtCny(officialCnyVal)}`)
+        officialUsdVal != null
+          ? h('div', { class: 'text-xs text-gray-400 line-through' }, `${t('pricing.official')} ${fmtUsd(officialUsdVal)} ${fmtCny(officialCnyVal)}`)
           : null
       ])
     }
@@ -213,11 +188,6 @@ const PriceCell = defineComponent({
 
 function copyModel(name: string) {
   navigator.clipboard?.writeText(name)
-}
-function toggleTheme() {
-  isDark.value = !isDark.value
-  document.documentElement.classList.toggle('dark', isDark.value)
-  localStorage.setItem('theme', isDark.value ? 'dark' : 'light')
 }
 function syncDefaults() {
   if (platforms.value.length > 0) {
@@ -231,7 +201,6 @@ watch(activePlatform, () => {
 })
 
 onMounted(async () => {
-  isDark.value = document.documentElement.classList.contains('dark')
   if (!appStore.publicSettingsLoaded) appStore.fetchPublicSettings()
   authStore.checkAuth()
   try {

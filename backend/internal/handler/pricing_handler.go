@@ -50,9 +50,10 @@ type pricingPlatform struct {
 }
 
 type pricingResponse struct {
-	Enabled   bool              `json:"enabled"`
-	CNYRate   float64           `json:"cny_rate"`
-	Platforms []pricingPlatform `json:"platforms"`
+	Enabled            bool              `json:"enabled"`
+	CNYRate            float64           `json:"cny_rate"`
+	RechargeMultiplier float64           `json:"recharge_multiplier"`
+	Platforms          []pricingPlatform `json:"platforms"`
 }
 
 // Get handles GET /api/v1/pricing.
@@ -60,7 +61,7 @@ func (h *PricingHandler) Get(c *gin.Context) {
 	ctx := c.Request.Context()
 	rt := h.settings.GetPricingPageRuntime(ctx)
 	if !rt.Enabled {
-		response.Success(c, pricingResponse{Enabled: false, CNYRate: rt.CNYRate})
+		response.Success(c, pricingResponse{Enabled: false, CNYRate: rt.CNYRate, RechargeMultiplier: rt.RechargeMultiplier})
 		return
 	}
 
@@ -139,7 +140,7 @@ func (h *PricingHandler) Get(c *gin.Context) {
 		}
 	}
 
-	out := pricingResponse{Enabled: true, CNYRate: rt.CNYRate, Platforms: []pricingPlatform{}}
+	out := pricingResponse{Enabled: true, CNYRate: rt.CNYRate, RechargeMultiplier: rt.RechargeMultiplier, Platforms: []pricingPlatform{}}
 	for _, p := range platformOrder {
 		pg := pricingPlatform{Platform: p, Groups: []pricingGroup{}}
 		for _, agg := range platforms[p] {

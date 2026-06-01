@@ -969,19 +969,22 @@ func (s *SettingService) GetAvailableChannelsRuntime(ctx context.Context) Availa
 
 // PricingPageRuntime holds the public pricing page display config.
 type PricingPageRuntime struct {
-	Enabled  bool
-	CNYRate  float64
-	GroupIDs []int64
+	Enabled            bool
+	CNYRate            float64
+	RechargeMultiplier float64
+	GroupIDs           []int64
 }
 
 // GetPricingPageRuntime reads the pricing page config directly from settings.
 // Fail-closed: on error returns Enabled=false. CNYRate defaults to 7 when unset/invalid.
+// RechargeMultiplier defaults to 1 (USD credited per 1 CNY paid).
 func (s *SettingService) GetPricingPageRuntime(ctx context.Context) PricingPageRuntime {
-	rt := PricingPageRuntime{CNYRate: 7.0}
+	rt := PricingPageRuntime{CNYRate: 7.0, RechargeMultiplier: defaultBalanceRechargeMultiplier}
 	vals, err := s.settingRepo.GetMultiple(ctx, []string{
 		SettingKeyPricingPageEnabled,
 		SettingKeyPricingCNYRate,
 		SettingKeyPricingGroupIDs,
+		SettingBalanceRechargeMult,
 	})
 	if err != nil {
 		return rt
@@ -989,6 +992,9 @@ func (s *SettingService) GetPricingPageRuntime(ctx context.Context) PricingPageR
 	rt.Enabled = vals[SettingKeyPricingPageEnabled] == "true"
 	if v, err := strconv.ParseFloat(strings.TrimSpace(vals[SettingKeyPricingCNYRate]), 64); err == nil && v > 0 {
 		rt.CNYRate = v
+	}
+	if v, err := strconv.ParseFloat(strings.TrimSpace(vals[SettingBalanceRechargeMult]), 64); err == nil && v > 0 {
+		rt.RechargeMultiplier = v
 	}
 	if raw := strings.TrimSpace(vals[SettingKeyPricingGroupIDs]); raw != "" && raw != "[]" {
 		var ids []int64

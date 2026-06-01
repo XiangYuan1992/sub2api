@@ -24,6 +24,7 @@ export interface PricingPlatform {
 export interface PricingResponse {
   enabled: boolean
   cny_rate: number
+  recharge_multiplier: number
   platforms: PricingPlatform[]
 }
 

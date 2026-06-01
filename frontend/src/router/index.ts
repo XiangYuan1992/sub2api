@@ -184,6 +184,16 @@ const routes: RouteRecordRaw[] = [
       titleKey: 'pricing.title'
     }
   },
+  {
+    path: '/docs',
+    name: 'Docs',
+    component: () => import('@/views/public/DocsView.vue'),
+    meta: {
+      requiresAuth: false,
+      title: 'Docs',
+      titleKey: 'docs.title'
+    }
+  },
 
   // ==================== User Routes ====================
   {
