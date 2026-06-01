@@ -111,6 +111,7 @@ func ProvideHandlers(
 	paymentHandler *PaymentHandler,
 	paymentWebhookHandler *PaymentWebhookHandler,
 	availableChannelHandler *AvailableChannelHandler,
+	pricingHandler *PricingHandler,
 	_ *service.IdempotencyCoordinator,
 	_ *service.IdempotencyCleanupService,
 ) *Handlers {
@@ -131,7 +132,13 @@ func ProvideHandlers(
 		Payment:          paymentHandler,
 		PaymentWebhook:   paymentWebhookHandler,
 		AvailableChannel: availableChannelHandler,
+		Pricing:          pricingHandler,
 	}
+}
+
+// ProvidePricingHandler creates PricingHandler with concrete service types.
+func ProvidePricingHandler(channelService *service.ChannelService, settingService *service.SettingService) *PricingHandler {
+	return NewPricingHandler(channelService, settingService)
 }
 
 // ProviderSet is the Wire provider set for all handlers
@@ -152,6 +159,7 @@ var ProviderSet = wire.NewSet(
 	NewPaymentHandler,
 	NewPaymentWebhookHandler,
 	NewAvailableChannelHandler,
+	ProvidePricingHandler,
 
 	// Admin handlers
 	admin.NewDashboardHandler,
